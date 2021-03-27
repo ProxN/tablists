@@ -5,6 +5,7 @@ config({ path: './config.env' });
 import express from 'express';
 import { buildSchema } from 'type-graphql';
 import session from 'express-session';
+import { graphqlUploadExpress } from 'graphql-upload';
 import cookieParser from 'cookie-parser';
 import { ApolloServer } from 'apollo-server-express';
 import Redis from 'ioredis';
@@ -22,6 +23,7 @@ const Main = async () => {
 
   app.set('trust proxy', 1);
   app.use(cookieParser());
+  app.use(graphqlUploadExpress({ maxFileSize: 500000000, maxFiles: 10 }));
 
   app.use(
     session({
@@ -52,6 +54,7 @@ const Main = async () => {
       res,
       redis,
     }),
+    uploads: false,
   });
 
   apolloServer.applyMiddleware({ app, cors: false });

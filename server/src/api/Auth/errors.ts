@@ -62,3 +62,8 @@ export const AccountLocked = {
   field: 'isActive',
   message: 'Your account is temporarily locked.',
 };
+
+export const YourAccountIsDeleted = {
+  field: 'isDeleted',
+  masseage: 'Your account has been deleted.',
+};

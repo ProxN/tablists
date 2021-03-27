@@ -11,5 +11,8 @@ declare namespace NodeJS {
     MAIL_HOST: string;
     MAIL_USER: string;
     MAIL_PASS: string;
+    CLOUDINARY_NAME: string;
+    CLOUDINARY_API_KEY: string;
+    CLOUDINARY_SECRET: string;
   }
 }

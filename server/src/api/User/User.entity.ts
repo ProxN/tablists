@@ -34,6 +34,14 @@ class User extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   avatar?: string | null;
 
+  @Field()
+  @Column({ default: false })
+  isPrivate?: boolean;
+
+  @Field()
+  @Column({ default: false })
+  isDeleted?: boolean;
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt?: Date;

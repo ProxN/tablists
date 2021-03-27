@@ -1,6 +1,33 @@
-import { Ctx, Query, Resolver } from 'type-graphql';
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  Field,
+  InputType,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from 'type-graphql';
 import { Context } from '../../types/context';
 import User from './User.entity';
+import * as userErrors from './errors';
+import { ErrorResponse } from '../../types/error';
+
+@ObjectType()
+class changePasswordRes extends ErrorResponse {
+  @Field(() => Boolean, { nullable: true })
+  changed?: boolean;
+}
+
+@InputType()
+class UpdateProfileInputs implements Partial<User> {
+  @Field(() => String, { nullable: true })
+  username?: string;
+
+  @Field(() => String, { nullable: true })
+  avatar?: string;
+}
 
 @Resolver()
 class UserResolver {
@@ -10,6 +37,73 @@ class UserResolver {
       return User.findOne(req.session.userId);
     }
     return null;
+  }
+
+  @Authorized()
+  @Mutation(() => User)
+  async updateProfile(
+    @Arg('newProfile') newProfile: UpdateProfileInputs,
+    @Ctx() { req }: Context
+  ): Promise<User | null> {
+    await User.update({ id: req.session.userId }, newProfile);
+
+    const updatedUser = await User.findOne(req.session.userId);
+    if (updatedUser) return updatedUser;
+
+    return null;
+  }
+
+  @Authorized()
+  @Mutation(() => changePasswordRes)
+  async changePassword(
+    @Arg('oldPassword') oldPassword: string,
+    @Arg('newPassword') newPassword: string,
+    @Ctx() { req }: Context
+  ) {
+    if (!oldPassword) {
+      return { error: userErrors.oldPasswordRequired };
+    }
+    if (!newPassword) {
+      return { error: userErrors.newPasswordRequired };
+    }
+
+    const user = await User.findOne(req.session.userId);
+
+    if (!user || !(await user.comparePassword(user.password, oldPassword))) {
+      return { error: userErrors.oldPasswordIncorrect };
+    }
+
+    user.password = newPassword;
+    await user?.save();
+
+    return { changed: true };
+  }
+
+  @Authorized()
+  @Mutation(() => Boolean)
+  async deleteAccount(@Ctx() { req, res }: Context): Promise<boolean> {
+    try {
+      await User.update(
+        { id: req.session.userId },
+        {
+          isDeleted: true,
+          isPrivate: true,
+        }
+      );
+      return new Promise((resolve) => {
+        req.session.destroy((err) => {
+          res.clearCookie('sid');
+          if (err) {
+            resolve(false);
+            return;
+          }
+
+          resolve(true);
+        });
+      });
+    } catch (error) {
+      return false;
+    }
   }
 }
 

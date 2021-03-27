@@ -75,6 +75,11 @@ class AuthResolver {
     }
 
     const user = await User.findOne({ where: { email: data.email } });
+
+    if (user?.isDeleted) {
+      return { error: authErrors.YourAccountIsDeleted };
+    }
+
     if (!user || !(await user.comparePassword(user.password, data.password))) {
       return { error: authErrors.IncorrectEmailOrPassword };
     }
