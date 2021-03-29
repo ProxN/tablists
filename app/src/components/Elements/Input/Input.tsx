@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import Icon from '@components/Icon';
+import Icon from '@components/Elements/Icon';
 import { InputBase, IconBox, InputContainer, InputStyleProps } from './Input.styles';
 
 interface InputProps

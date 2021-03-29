@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import LogoSVG from '@assets/logo.svg';
-import Input from '@components/Input';
+import Input from '@components/Elements/Input';
 
 const HeaderContainer = styled.header`
   background: ${({ theme }) => theme.colors.bg.main};
@@ -11,7 +11,7 @@ const HeaderContainer = styled.header`
 
 const Nav = styled.nav`
   height: 100%;
-  max-width: 100rem;
+  max-width: 110rem;
   margin: 0 auto;
   display: flex;
   align-items: center;

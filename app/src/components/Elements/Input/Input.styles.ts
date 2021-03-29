@@ -27,13 +27,10 @@ export const InputBase = styled.input<InputStyleProps>`
   }
 
   ${({ right }) =>
-    right
-      ? css`
-          padding-right: 3.5rem;
-        `
-      : css`
-          padding-left: 3.5rem;
-        `};
+    right &&
+    css`
+      padding-right: 3.5rem;
+    `};
 `;
 
 export const InputContainer = styled.div`
@@ -54,11 +51,8 @@ export const IconBox = styled.div<{ right?: boolean }>`
   }
 
   ${({ right }) =>
-    right
-      ? css`
-          right: 1rem;
-        `
-      : css`
-          left: 1rem;
-        `};
+    right &&
+    css`
+      right: 1rem;
+    `};
 `;

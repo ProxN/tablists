@@ -24,7 +24,8 @@ const SvgBox = styled.div<StyleProps>`
   }
 `;
 
-const DynamicIcon = (name: string) => dynamic(() => import(`../../assets/${name}.svg`));
+const DynamicIcon = (name: string) =>
+  dynamic(() => import(`../../../assets/${name}.svg`));
 
 const Icon: React.FC<IconProps> = ({ size, name }) => {
   const Ic = DynamicIcon(name);
