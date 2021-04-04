@@ -1,5 +1,7 @@
+import withUser from '@utils/withUser';
+
 const Index = () => {
   return <div>hello</div>;
 };
 
-export default Index;
+export default withUser(Index);

@@ -14,8 +14,8 @@ export const AuthBox = styled.div`
   `};
   box-shadow: 0 0 5.49px 0.23px rgba(0, 0, 0, 0.08);
 
-  max-width: 36rem;
-  padding: 2.5rem;
+  max-width: 40rem;
+  padding: 3rem 2.5rem;
 `;
 
 export const Title = styled.span`
@@ -27,7 +27,7 @@ export const Form = styled.form`
   margin-top: 3rem;
   margin-bottom: 1.5rem;
   input {
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.4rem;
   }
 `;
 

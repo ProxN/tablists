@@ -20,6 +20,15 @@ const LoaderSvg = styled.svg`
   animation: ${Rotate} linear 1.3s infinite;
 `;
 
+const Container = css`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+`;
+
 const LoaderContainer = styled.div<LoaderProps>`
   display: flex;
   justify-content: center;
@@ -35,16 +44,19 @@ const LoaderContainer = styled.div<LoaderProps>`
         width: ${Sizes[size as keyof typeof Sizes]};
       `}
   }
+
+  ${({ block }) => block && Container}
 `;
 
 interface LoaderProps {
   size?: Size;
   color?: 'default' | 'primary';
+  block?: boolean;
 }
 
-const Loader: React.FC<LoaderProps> = ({ size = 'middle', color = 'primary' }) => {
+const Loader: React.FC<LoaderProps> = ({ block, size = 'middle', color = 'primary' }) => {
   return (
-    <LoaderContainer color={color} size={size}>
+    <LoaderContainer color={color} size={size} block={block}>
       <LoaderSvg
         xmlns='http://www.w3.org/2000/svg'
         width='71'

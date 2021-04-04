@@ -1,69 +1,30 @@
-import styled, { css } from 'styled-components';
+import NextLink from 'next/link';
+import { useAuth } from '@context/auth.context';
 import LogoSVG from '@assets/logo.svg';
 import Input from '@components/Elements/Input';
-
-const HeaderContainer = styled.header`
-  background: ${({ theme }) => theme.colors.bg.main};
-  height: 7rem;
-  width: 100%;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
-`;
-
-const Nav = styled.nav`
-  height: 100%;
-  max-width: 110rem;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  padding: 0 1.5rem;
-  justify-content: space-between;
-`;
-
-const Logo = styled.a`
-  cursor: pointer;
-  user-select: none;
-  display: flex;
-`;
-
-const NavLinks = styled.ul`
-  display: flex;
-`;
-
-const NavLink = styled.a`
-  font-size: 1.5rem;
-  padding: 1rem 1.5rem;
-  user-select: none;
-  cursor: pointer;
-  transition: color 0.1s ease-in-out;
-  :hover {
-    color: ${({ theme }) => theme.colors.primary.main};
-  }
-`;
-
-const AuthLinks = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const AuthLink = styled(NavLink)`
-  ${({ theme }) => css`
-    background: ${theme.colors.primary.main};
-    color: ${theme.colors.invertText};
-    border-radius: ${theme.borderRadius / 3}px;
-    :hover {
-      color: ${theme.colors.invertText};
-    }
-  `};
-  padding: 0.6rem 1.2rem;
-`;
+import Avatar from '@components/Elements/Avatar';
+import {
+  AuthLink,
+  AuthLinks,
+  HeaderContainer,
+  Logo,
+  Nav,
+  NavLink,
+  NavLinks,
+  UserProfile,
+} from './Header.styles';
 
 const Header = () => {
+  const { user } = useAuth();
+
   return (
     <HeaderContainer>
       <Nav>
-        <Logo>
-          <LogoSVG />
-        </Logo>
+        <NextLink href='/'>
+          <Logo>
+            <LogoSVG />
+          </Logo>
+        </NextLink>
         <NavLinks>
           <li>
             <NavLink>Movies</NavLink>
@@ -84,12 +45,23 @@ const Header = () => {
         <form>
           <Input placeholder='Search for lists' icon='search' right />
         </form>
-        <div>
-          <AuthLinks>
-            <NavLink>Sign in</NavLink>
-            <AuthLink>Sign up</AuthLink>
-          </AuthLinks>
-        </div>
+        {user ? (
+          <UserProfile>
+            <Avatar name={user.username[0]} src={user.avatar} />
+            <span>{user.username}</span>
+          </UserProfile>
+        ) : (
+          <div>
+            <AuthLinks>
+              <NextLink href='/signin'>
+                <NavLink>Sign in</NavLink>
+              </NextLink>
+              <NextLink href='/signup'>
+                <AuthLink>Sign up</AuthLink>
+              </NextLink>
+            </AuthLinks>
+          </div>
+        )}
       </Nav>
     </HeaderContainer>
   );

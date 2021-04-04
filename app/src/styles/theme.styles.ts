@@ -14,6 +14,11 @@ const colors = {
     main: '#ffffff',
     dark: '#EBF3FA',
   },
+  danger: {
+    light: '#EA675A',
+    main: '#E74C3C',
+    dark: '#D04536',
+  },
   text: 'rgba(0,0,0,.85)',
   invertText: '#fff',
 };

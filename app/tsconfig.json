@@ -25,11 +25,10 @@
       "paths": {
         "@components/*":["components/*"],
         "@styles":["styles"],
-       "@assets/*":["assets/*"],
-        // "@constantns/*":["constants/*"],
-        // "@hooks/*":["hooks/*"],
-        // "@utils/*":["utils/*"],
-        // "@context/*":["context/*"],
+        "@assets/*":["assets/*"],
+        "@hooks/*":["hooks/*"],
+        "@context/*":["context/*"],
+        "@utils/*":["utils/*"],
         // "@pages/*":["pages/*"]
       }
     },

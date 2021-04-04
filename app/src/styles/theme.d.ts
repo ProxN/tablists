@@ -11,6 +11,7 @@ declare module 'styled-components' {
     colors: {
       primary: IColor;
       bg: IColor;
+      danger: IColor;
       text: string;
       invertText: string;
     };

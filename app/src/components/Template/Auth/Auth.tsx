@@ -30,13 +30,19 @@ interface AuthProps {
   hideLinks?: boolean;
 }
 
-const Auth: React.FC<AuthProps> = ({ children, title, page = 'login' }) => {
+const Auth: React.FC<AuthProps> = ({
+  children,
+  onSubmit,
+  title,
+  page = 'login',
+  hideLinks,
+}) => {
   return (
     <AuthContainer>
       <AuthBox>
         <Title>{title}</Title>
-        <Form>{children}</Form>
-        {page && (
+        <Form onSubmit={onSubmit}>{children}</Form>
+        {!hideLinks && page && (
           <AuthContent>
             <Text>
               {info[page].text}
