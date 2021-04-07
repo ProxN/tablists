@@ -15,13 +15,17 @@ const withUser = <P extends Record<string, unknown>>(
     const { user, loadUser } = useUser();
 
     useEffect(() => {
-      const onLoad = async () => {
-        if (!isAuthenticated) {
-          await loadUser();
-        }
-      };
-      onLoad();
-      setISloading(false);
+      if (!isAuthenticated) {
+        const onLoad = async () => {
+          if (!isAuthenticated) {
+            await loadUser();
+            setISloading(false);
+          }
+        };
+        onLoad();
+      } else {
+        setISloading(false);
+      }
     }, []);
 
     useEffect(() => {

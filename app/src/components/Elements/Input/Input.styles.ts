@@ -56,3 +56,9 @@ export const IconBox = styled.div<{ right?: boolean }>`
       right: 1rem;
     `};
 `;
+
+export const Label = styled.label`
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  display: block;
+`;

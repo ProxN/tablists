@@ -1,14 +1,21 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface AvatarProps {
   src?: string;
   name?: string;
+  size?: number;
+  onClick?: () => void;
 }
 
-const AvatarBox = styled.div<{ bg?: boolean }>`
+const Sizes = {
+  1: '3.5rem',
+  2: '6rem',
+  3: '8rem',
+};
+
+const AvatarBox = styled.div<{ bg?: boolean; size?: number }>`
   background: ${({ theme, bg }) => bg && theme.colors.primary.light};
-  height: 3.5rem;
-  width: 3.5rem;
+
   border-radius: 50%;
   cursor: pointer;
   overflow: hidden;
@@ -21,6 +28,13 @@ const AvatarBox = styled.div<{ bg?: boolean }>`
     color: #fff;
     font-weight: 500;
   }
+
+  ${({ size }) =>
+    size &&
+    css`
+      height: ${Sizes[size as keyof typeof Sizes]};
+      width: ${Sizes[size as keyof typeof Sizes]};
+    `};
 `;
 
 const AvatarImg = styled.img`
@@ -29,9 +43,9 @@ const AvatarImg = styled.img`
   height: auto;
 `;
 
-const Avatar: React.FC<AvatarProps> = ({ src, name }) => {
+const Avatar: React.FC<AvatarProps> = ({ src, name, size = 1, ...rest }) => {
   return (
-    <AvatarBox bg={!src}>
+    <AvatarBox size={size} bg={!src} {...rest}>
       {src ? <AvatarImg src={src} alt='User Image Profile' /> : <span>{name}</span>}
     </AvatarBox>
   );

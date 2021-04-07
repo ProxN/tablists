@@ -13,7 +13,6 @@ export const AuthBox = styled.div`
     border-radius: ${theme.borderRadius / 2}px;
   `};
   box-shadow: 0 0 5.49px 0.23px rgba(0, 0, 0, 0.08);
-
   max-width: 40rem;
   padding: 3rem 2.5rem;
 `;
