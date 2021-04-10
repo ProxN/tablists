@@ -6,18 +6,40 @@ const MeQuery = gql`
   {
     me {
       id
-      email
       username
+      avatar
+      email
+      isDeleted
+      isPrivate
+      createdAt
+      updatedAt
     }
   }
 `;
 
+const authPath = ['/signup', '/signin', '/forgot_password', '/reset_password'];
+interface Props {
+  props: any;
+  redirect?: {
+    destination: string;
+    permanent: boolean;
+  };
+}
+
 const checkAuth = async (ctx: GetServerSidePropsContext) => {
   const { cookie } = ctx.req.headers;
-  if (!cookie) return { props: {} };
+  const obj: Props = { props: {} };
+
+  if (!authPath.includes(ctx.resolvedUrl)) {
+    obj.redirect = {
+      destination: '/',
+      permanent: false,
+    };
+  }
+  if (!cookie) return obj;
 
   try {
-    await graphql.request<{ me: IUser }>(
+    const req = await graphql.request<{ me: IUser }>(
       MeQuery,
       {},
       {
@@ -25,14 +47,16 @@ const checkAuth = async (ctx: GetServerSidePropsContext) => {
       }
     );
     return {
-      props: {},
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
+      props: { user: req.me },
+      // redirect: {
+      //   destination: authPath.includes(ctx.resolvedUrl) ? '/' : ctx.resolvedUrl,
+      //   permanent: false,
+      // },
     };
   } catch (error) {
-    return { props: {} };
+    return {
+      props: {},
+    };
   }
 };
 

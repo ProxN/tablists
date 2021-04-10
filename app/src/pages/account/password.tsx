@@ -1,5 +1,6 @@
 import AccountTabs from '@components/Elements/AccountTabs';
 import Container from '@components/Elements/Container';
+import checkAuth from '@utils/checkAuth';
 
 const Password = () => {
   return (
@@ -8,5 +9,7 @@ const Password = () => {
     </Container>
   );
 };
+
+export const getServerSideProps = checkAuth;
 
 export default Password;

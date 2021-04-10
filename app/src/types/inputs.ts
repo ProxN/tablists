@@ -5,7 +5,7 @@ export interface AuthInputs {
 
 export interface IError {
   error?: {
-    field?: string;
-    message?: string;
+    field: string;
+    message: string;
   };
 }

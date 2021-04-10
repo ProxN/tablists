@@ -19,6 +19,11 @@ const colors = {
     main: '#E74C3C',
     dark: '#D04536',
   },
+  success: {
+    light: '#4ED486',
+    main: '#2ECC71',
+    dark: '#29B766',
+  },
   text: 'rgba(0,0,0,.85)',
   invertText: '#fff',
 };

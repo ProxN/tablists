@@ -4,6 +4,7 @@ export type Status =
   | 'secondary'
   | 'danger'
   | 'warning'
-  | 'success';
+  | 'success'
+  | string;
 
 export type Size = 'small' | 'middle' | 'large';

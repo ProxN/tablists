@@ -38,6 +38,7 @@ const ResponseData = `
     user{
         id
         username
+        avatar
         email
         isDeleted
         isPrivate
@@ -51,6 +52,7 @@ const UserQuery = gql`
     me {
       id
       username
+      avatar
       email
       isDeleted
       isPrivate
