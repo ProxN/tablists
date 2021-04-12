@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { gql, graphql } from '@utils/graphqlCall';
 import { useAuth } from '@context/auth.context';
-import { IError } from '../types/inputs';
+import { IError, UpdateProfileInputs } from '../types/inputs';
 import { IUser } from '../types/entities';
 
 interface UploadResponse extends IError {
@@ -9,6 +9,10 @@ interface UploadResponse extends IError {
     url: string;
     id: string;
   };
+}
+
+interface UpdateProfileResponse extends IError {
+  user?: IUser;
 }
 
 const UploadMutation = gql`
@@ -26,45 +30,67 @@ const UploadMutation = gql`
   }
 `;
 
-const UpdateAvatarMutation = gql`
-  mutation UpdateProfile($avatar: String!) {
-    updateProfile(newProfile: { avatar: $avatar }) {
-      id
-      username
-      avatar
-      email
-      isDeleted
-      isPrivate
-      createdAt
-      updatedAt
+const UpdateProfileMutation = gql`
+  mutation UpdateProfile($avatar: String, $username: String) {
+    updateProfile(newProfile: { avatar: $avatar, username: $username }) {
+      user {
+        id
+        username
+        avatar
+        email
+        isDeleted
+        isPrivate
+        createdAt
+        updatedAt
+      }
+      error {
+        field
+        message
+      }
     }
   }
 `;
 
-export const useUpdateAvatar = () => {
+export const useProfile = () => {
   const [error, setError] = useState<{ field: string; message: string }>();
   const [updated, setUpdated] = useState(false);
   const { setAuth } = useAuth();
 
-  const updateAvatar = async (file: File) => {
+  const updateUser = async (data: UpdateProfileInputs) => {
+    const { file, ...rest } = data;
     try {
-      const { upload } = await graphql.request<{ upload: UploadResponse }>(
-        UploadMutation,
-        { file }
-      );
-      if (upload.image) {
-        const { updateProfile } = await graphql.request<{ updateProfile: IUser }>(
-          UpdateAvatarMutation,
-          {
-            avatar: upload.image?.url,
-          }
+      if (file) {
+        const { upload } = await graphql.request<{ upload: UploadResponse }>(
+          UploadMutation,
+          { file }
         );
-        setAuth(updateProfile);
-        setUpdated(true);
-      }
+        if (upload.image) {
+          const { updateProfile } = await graphql.request<{
+            updateProfile: UpdateProfileResponse;
+          }>(UpdateProfileMutation, {
+            avatar: upload.image?.url,
+          });
+          if (updateProfile.user) {
+            setAuth(updateProfile.user);
+          }
+          setUpdated(true);
+        }
 
-      if (upload.error) {
-        setError(upload.error);
+        if (upload.error) {
+          setError(upload.error);
+        }
+      } else {
+        const res = await graphql.request<{ updateProfile: UpdateProfileResponse }>(
+          UpdateProfileMutation,
+          rest
+        );
+
+        if (res.updateProfile.user) {
+          setAuth(res.updateProfile.user);
+        }
+        if (res.updateProfile.error) {
+          setError(res.updateProfile.error);
+        }
       }
     } catch (err) {
       setError({
@@ -74,7 +100,7 @@ export const useUpdateAvatar = () => {
     }
   };
 
-  return { updateAvatar, error, updated };
+  return { updateUser, error, updated };
 };
 
 export const ts = '';

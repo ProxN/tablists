@@ -65,6 +65,7 @@ export const DeleteAccount = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 1rem;
   span {
     font-weight: 500;
   }

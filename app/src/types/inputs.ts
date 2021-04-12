@@ -9,3 +9,8 @@ export interface IError {
     message: string;
   };
 }
+
+export interface UpdateProfileInputs {
+  file?: File;
+  username?: string;
+}

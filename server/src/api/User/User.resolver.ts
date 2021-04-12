@@ -20,6 +20,12 @@ class changePasswordRes extends ErrorResponse {
   changed?: boolean;
 }
 
+@ObjectType()
+class UpdateProfileRes extends ErrorResponse {
+  @Field(() => User, { nullable: true })
+  user?: User;
+}
+
 @InputType()
 class UpdateProfileInputs implements Partial<User> {
   @Field(() => String, { nullable: true })
@@ -40,17 +46,23 @@ class UserResolver {
   }
 
   @Authorized()
-  @Mutation(() => User)
+  @Mutation(() => UpdateProfileRes)
   async updateProfile(
     @Arg('newProfile') newProfile: UpdateProfileInputs,
     @Ctx() { req }: Context
-  ): Promise<User | null> {
-    await User.update({ id: req.session.userId }, newProfile);
+  ): Promise<UpdateProfileRes> {
+    let updatedUser;
+    try {
+      await User.update({ id: req.session.userId }, newProfile);
 
-    const updatedUser = await User.findOne(req.session.userId);
-    if (updatedUser) return updatedUser;
+      updatedUser = await User.findOne(req.session.userId);
+    } catch (error) {
+      if (error.code === '23505') {
+        return { error: userErrors.usernameAlreadyExists };
+      }
+    }
 
-    return null;
+    return { user: updatedUser };
   }
 
   @Authorized()

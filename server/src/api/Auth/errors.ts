@@ -65,5 +65,5 @@ export const AccountLocked = {
 
 export const YourAccountIsDeleted = {
   field: 'isDeleted',
-  masseage: 'Your account has been deleted.',
+  message: 'Your account has been deleted.',
 };

@@ -12,3 +12,8 @@ export const oldPasswordIncorrect = {
   field: 'password',
   message: 'Your old password is incorrect!',
 };
+
+export const usernameAlreadyExists = {
+  field: 'username',
+  message: 'Username has already been taken.',
+};

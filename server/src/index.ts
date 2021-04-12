@@ -9,6 +9,7 @@ import { graphqlUploadExpress } from 'graphql-upload';
 import cookieParser from 'cookie-parser';
 import { ApolloServer } from 'apollo-server-express';
 import Redis from 'ioredis';
+import cors from 'cors';
 import connectRedis from 'connect-redis';
 import authChecker from './utils/authChecker';
 import { resolvers } from './api';
@@ -17,6 +18,13 @@ import DBconn from './conn';
 const Main = async () => {
   await DBconn();
   const app = express();
+
+  app.use(
+    cors({
+      origin: process.env.CORS_ORIGIN,
+      credentials: true,
+    })
+  );
 
   const RedisStore = connectRedis(session);
   const redis = new Redis('127.0.0.1:6379');

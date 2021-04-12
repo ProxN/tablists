@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { useUpdateAvatar } from '@hooks/useProfile';
+import { Controller, useForm } from 'react-hook-form';
+import { useProfile } from '@hooks/useProfile';
 import { useToast } from '@context/toast.context';
 import Avatar from '@components/Elements/Avatar';
 import Button from '@components/Elements/Button';
 import Input from '@components/Elements/Input';
 import Text from '@components/Elements/Text';
 import { IUser } from 'types/entities';
+import { UpdateProfileInputs } from 'types/inputs';
 import {
   ProfileContainer,
   AvatarGroup,
@@ -27,8 +29,12 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [avatar, setAvatar] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { updateAvatar, updated, error: avatarError } = useUpdateAvatar();
+  const { control, handleSubmit, formState } = useForm<UpdateProfileInputs>({
+    mode: 'onChange',
+  });
+  const { updateUser, updated, error } = useProfile();
   const { setToast } = useToast();
 
   const openFileUpload = () => {
@@ -42,7 +48,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
       reader.onloadend = () => {
         setAvatar(reader.result as string);
       };
-      await updateAvatar(e.target.files[0]);
+      await updateUser({ file: e.target.files[0] });
     }
   };
 
@@ -55,10 +61,18 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     return () => setToast(null);
   }, [updated]);
 
+  const onSubmit = async (inputs: UpdateProfileInputs) => {
+    if (inputs.username !== user.username) {
+      setIsLoading(true);
+      await updateUser(inputs);
+      setIsLoading(false);
+    }
+  };
+
   return (
     <ProfileContainer>
       <Heading>Account</Heading>
-      <ProfileForm>
+      <ProfileForm onSubmit={handleSubmit(onSubmit)}>
         <Box>
           <Label htmlFor='avatar'>
             Avatar
@@ -84,11 +98,18 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
               Remove
             </RemoveButton>
           </AvatarGroup>
-          {avatarError && <Text status='danger'>{avatarError.message}</Text>}
         </Box>
         <Box>
           <InputGroup>
-            <Input defaultValue={user.username} label='Username' />
+            <Controller
+              render={(props) => <Input id='username' label='Username' {...props} />}
+              name='username'
+              control={control}
+              defaultValue={user.username}
+              rules={{
+                required: 'Username is required',
+              }}
+            />
             <Input disabled defaultValue={user.email} label='Email' />
           </InputGroup>
         </Box>
@@ -96,8 +117,15 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
           <span>Delete your account</span>
           <Button status='danger'>Delete account</Button>
         </DeleteAccount>
+        {error && <Text status='danger'>{error.message}</Text>}
         <Action>
-          <Button>Save changes</Button>
+          <Button
+            loading={isLoading}
+            disabled={!formState.isValid || isLoading}
+            type='submit'
+          >
+            Save changes
+          </Button>
         </Action>
       </ProfileForm>
     </ProfileContainer>

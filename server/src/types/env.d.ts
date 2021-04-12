@@ -14,5 +14,6 @@ declare namespace NodeJS {
     CLOUDINARY_NAME: string;
     CLOUDINARY_API_KEY: string;
     CLOUDINARY_SECRET: string;
+    CORS_ORIGIN: string;
   }
 }
