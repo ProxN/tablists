@@ -46,10 +46,12 @@ const Header = () => {
           <Input placeholder='Search for lists' icon='search' right />
         </form>
         {user ? (
-          <UserProfile>
-            <Avatar name={user.username[0]} src={user.avatar} />
-            <span>{user.username}</span>
-          </UserProfile>
+          <NextLink href='/account'>
+            <UserProfile>
+              <Avatar name={user.username[0]} src={user.avatar} />
+              <span>{user.username}</span>
+            </UserProfile>
+          </NextLink>
         ) : (
           <div>
             <AuthLinks>

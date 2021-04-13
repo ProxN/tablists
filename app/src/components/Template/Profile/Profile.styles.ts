@@ -1,24 +1,5 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Button from '@components/Elements/Button';
-
-export const ProfileContainer = styled.div`
-  ${({ theme }) => css`
-    background: ${theme.colors.bg.main};
-    border-radius: ${theme.borderRadius / 2}px;
-  `};
-  width: 100%;
-  box-shadow: 0 0 5.49px 0.23px rgba(0, 0, 0, 0.08);
-  padding: 2.5rem 3rem;
-`;
-
-export const Heading = styled.h1`
-  font-size: 2.2rem;
-  opacity: 0.9;
-`;
-
-export const ProfileForm = styled.form`
-  margin-top: 2.4rem;
-`;
 
 export const Box = styled.div`
   border-bottom: 1px solid rgba(217, 217, 217, 0.5);

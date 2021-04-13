@@ -1,24 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Controller, useForm } from 'react-hook-form';
-import { useProfile } from '@hooks/useProfile';
+import { useProfile, useDeleteAccount } from '@hooks/useProfile';
+import useModalState from '@hooks/useModalState';
 import { useToast } from '@context/toast.context';
 import Avatar from '@components/Elements/Avatar';
 import Button from '@components/Elements/Button';
 import Input from '@components/Elements/Input';
+import ProfileCard from '@components/Elements/ProfileCard';
 import Text from '@components/Elements/Text';
 import { IUser } from 'types/entities';
 import { UpdateProfileInputs } from 'types/inputs';
 import {
-  ProfileContainer,
   AvatarGroup,
   Action,
   Box,
   DeleteAccount,
   FileInput,
-  Heading,
   InputGroup,
   Label,
-  ProfileForm,
   RemoveButton,
   UploadButton,
 } from './Profile.styles';
@@ -28,6 +28,7 @@ interface ProfileProps {
 }
 
 const Profile: React.FC<ProfileProps> = ({ user }) => {
+  const router = useRouter();
   const [avatar, setAvatar] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -35,7 +36,9 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     mode: 'onChange',
   });
   const { updateUser, updated, error } = useProfile();
+  const { openModal, closeModal } = useModalState();
   const { setToast } = useToast();
+  const [deleteAccount, { deleted }] = useDeleteAccount();
 
   const openFileUpload = () => {
     inputRef.current?.click();
@@ -69,10 +72,31 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    await deleteAccount();
+    closeModal();
+  };
+
+  const handleDeleteClick = () => {
+    openModal({
+      body: 'Are you sure you want to delete your account?',
+      props: {
+        title: 'Delete Account',
+        handler: handleDeleteAccount,
+      },
+    });
+  };
+
+  if (deleted) {
+    router.push({
+      pathname: '/',
+      query: { message: 'account-deleted' },
+    });
+  }
+
   return (
-    <ProfileContainer>
-      <Heading>Account</Heading>
-      <ProfileForm onSubmit={handleSubmit(onSubmit)}>
+    <ProfileCard title='Account'>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Box>
           <Label htmlFor='avatar'>
             Avatar
@@ -115,7 +139,9 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
         </Box>
         <DeleteAccount>
           <span>Delete your account</span>
-          <Button status='danger'>Delete account</Button>
+          <Button onClick={handleDeleteClick} status='danger'>
+            Delete account
+          </Button>
         </DeleteAccount>
         {error && <Text status='danger'>{error.message}</Text>}
         <Action>
@@ -127,8 +153,8 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
             Save changes
           </Button>
         </Action>
-      </ProfileForm>
-    </ProfileContainer>
+      </form>
+    </ProfileCard>
   );
 };
 

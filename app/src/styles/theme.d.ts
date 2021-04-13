@@ -9,8 +9,9 @@ type IColor = {
 declare module 'styled-components' {
   export interface DefaultTheme {
     colors: {
-      primary: IColor;
       bg: IColor;
+      default: IColor;
+      primary: IColor;
       danger: IColor;
       success: IColor;
       text: string;

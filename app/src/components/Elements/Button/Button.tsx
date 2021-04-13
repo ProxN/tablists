@@ -8,6 +8,7 @@ interface ButtonProps
     React.ButtonHTMLAttributes<HTMLButtonElement> {
   onClick?: () => void;
   loading?: boolean;
+  outline?: boolean;
 }
 
 interface ButtonStyleProps {
@@ -56,6 +57,7 @@ const BaseButton = styled.button<ButtonStyleProps>`
     cursor: not-allowed;
   }
 `;
+
 const ColorButton = styled(BaseButton)`
   ${({ theme, status }) => {
     const col = getColor(theme.colors, status as string, 'main');
@@ -73,12 +75,49 @@ const ColorButton = styled(BaseButton)`
   }}
 `;
 
+const OutlineButton = styled(BaseButton)`
+  ${({ theme, status }) => {
+    const col = getColor(theme.colors, status as string, 'main');
+    return css`
+      background: transparent;
+      color: ${theme.colors.text};
+      border-color: ${col};
+      :hover {
+        color: ${isLight(col) ? theme.colors.text : '#fff'};
+        background: ${col};
+      }
+      :disabled {
+        background: transparent;
+        color: ${theme.colors.text};
+      }
+    `;
+  }}
+`;
+
+const getStyledButton = ({ outline }: { outline?: boolean }) => {
+  if (outline) {
+    return OutlineButton;
+  }
+
+  return ColorButton;
+};
+
 const Button: React.FC<ButtonProps> = (props) => {
-  const { size = 'middle', status = 'primary', loading, children, ...rest } = props;
+  const {
+    size = 'middle',
+    outline,
+    status = 'primary',
+    loading,
+    children,
+    ...rest
+  } = props;
+
+  const StyledButton = getStyledButton({ outline });
+
   return (
-    <ColorButton size={size} status={status} {...rest}>
+    <StyledButton size={size} status={status} {...rest}>
       {loading ? <Loader color='default' size='small' /> : children}
-    </ColorButton>
+    </StyledButton>
   );
 };
 

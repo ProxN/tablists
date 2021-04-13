@@ -18,9 +18,9 @@ interface InputProps
 type Ref = HTMLInputElement;
 
 const Input = forwardRef<Ref, InputProps>((props, ref) => {
-  const { icon, label, right, ...rest } = props;
+  const { icon, label, id, right, ...rest } = props;
 
-  const input = <InputBase right={right} {...rest} ref={ref} />;
+  const input = <InputBase id={id} right={right} {...rest} ref={ref} />;
 
   if (icon) {
     return (
@@ -35,8 +35,8 @@ const Input = forwardRef<Ref, InputProps>((props, ref) => {
 
   if (label) {
     return (
-      <InputContainer>
-        <Label>{label}</Label>
+      <InputContainer style={{ marginBottom: '1.4rem' }}>
+        <Label htmlFor={id}>{label}</Label>
         {input}
       </InputContainer>
     );

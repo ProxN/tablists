@@ -102,20 +102,11 @@ class UserResolver {
           isPrivate: true,
         }
       );
-      return new Promise((resolve) => {
-        req.session.destroy((err) => {
-          res.clearCookie('sid');
-          if (err) {
-            resolve(false);
-            return;
-          }
-
-          resolve(true);
-        });
-      });
     } catch (error) {
       return false;
     }
+
+    return true;
   }
 }
 

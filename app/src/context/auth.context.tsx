@@ -2,9 +2,9 @@ import React, { createContext, useContext, useState } from 'react';
 import { IUser } from '../types/entities';
 
 interface AuthState {
-  user?: IUser;
+  user?: IUser | null;
   isAuthenticated: boolean;
-  setAuth: (user: IUser) => void;
+  setAuth: (user: IUser | null) => void;
 }
 
 const AuthContext = createContext<AuthState>({
@@ -13,9 +13,9 @@ const AuthContext = createContext<AuthState>({
 });
 
 export const AuthProvider: React.FC = (props) => {
-  const [user, setUser] = useState<IUser>();
+  const [user, setUser] = useState<IUser | null>(null);
 
-  const setAuth = (data: IUser) => {
+  const setAuth = (data: IUser | null) => {
     setUser(data);
   };
 

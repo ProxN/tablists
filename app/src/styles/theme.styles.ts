@@ -9,6 +9,11 @@ const colors = {
     main: '#5C8DF7',
     dark: '#5480E0',
   },
+  default: {
+    light: '#CACACA',
+    main: '#C1C1C1',
+    dark: '#9E9E9E',
+  },
   bg: {
     light: '#F2F7FB',
     main: '#ffffff',
