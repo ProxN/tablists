@@ -24,7 +24,13 @@ const meQuery = `
 const updateProflielMutation = `
     mutation UpdateProfile($username:String!,$avatar:String!){
         updateProfile(newProfile:{username:$username,avatar:$avatar}){
-       ${userInfo}
+          error{
+            field
+            message
+          }
+          user{
+            ${userInfo}
+          }
         }
     }
 `;
@@ -86,8 +92,8 @@ describe(desc, () => {
       variableValues: newProfile,
     });
 
-    expect(data?.updateProfile).to.have.property('avatar', newProfile.avatar);
-    expect(data?.updateProfile).to.have.property('username', newProfile.username);
+    expect(data?.updateProfile.user).to.have.property('avatar', newProfile.avatar);
+    expect(data?.updateProfile.user).to.have.property('username', newProfile.username);
   });
 
   describe(`${desc} => change password`, () => {

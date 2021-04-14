@@ -168,11 +168,13 @@ export const useChangePassword = () => {
 
 export const useDeleteAccount = () => {
   const [deleted, setDeleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error>();
   const { setAuth } = useAuth();
 
   const mutate = async () => {
     try {
+      setIsLoading(true);
       const res = await graphql.request<{
         deleteAccount: boolean;
         logout: boolean;
@@ -180,8 +182,10 @@ export const useDeleteAccount = () => {
       if (res.deleteAccount && res.logout) {
         setDeleted(true);
         setAuth(null);
+        setIsLoading(false);
       }
     } catch (err) {
+      setIsLoading(false);
       setError({
         field: 'network',
         message: 'Something went worng! Please try again.',
@@ -189,11 +193,12 @@ export const useDeleteAccount = () => {
     }
   };
 
-  return [mutate, { deleted, error }] as [
+  return [mutate, { deleted, error, isLoading }] as [
     typeof mutate,
     {
       deleted: typeof deleted;
       error: typeof error;
+      isLoading: typeof isLoading;
     }
   ];
 };

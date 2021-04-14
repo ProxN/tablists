@@ -36,6 +36,7 @@ const checkAuth = async (ctx: GetServerSidePropsContext) => {
       permanent: false,
     };
   }
+
   if (!cookie) return obj;
 
   try {
@@ -48,15 +49,9 @@ const checkAuth = async (ctx: GetServerSidePropsContext) => {
     );
     return {
       props: { user: req.me },
-      // redirect: {
-      //   destination: authPath.includes(ctx.resolvedUrl) ? '/' : ctx.resolvedUrl,
-      //   permanent: false,
-      // },
     };
   } catch (error) {
-    return {
-      props: {},
-    };
+    return obj;
   }
 };
 

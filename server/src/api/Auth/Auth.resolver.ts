@@ -40,7 +40,6 @@ class AuthResolver {
     }
 
     let user;
-
     try {
       const username = data.email.split('@')[0] + Math.floor(Math.random() * 300);
       const { email, password } = data;
@@ -76,12 +75,12 @@ class AuthResolver {
 
     const user = await User.findOne({ where: { email: data.email } });
 
-    if (user?.isDeleted) {
-      return { error: authErrors.YourAccountIsDeleted };
-    }
-
     if (!user || !(await user.comparePassword(user.password, data.password))) {
       return { error: authErrors.IncorrectEmailOrPassword };
+    }
+
+    if (user.isDeleted) {
+      return { error: authErrors.YourAccountIsDeleted };
     }
 
     req.session.userId = user.id;
