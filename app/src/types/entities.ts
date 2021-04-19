@@ -7,3 +7,14 @@ export interface IUser {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IList {
+  id: string;
+  name: string;
+  image: string;
+  published: boolean;
+  views: string;
+  description: string;
+  updatedAt: string;
+  createdAt: string;
+}

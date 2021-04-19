@@ -50,7 +50,8 @@ const BaseButton = styled.button<ButtonStyleProps>`
     block &&
     css`
       width: 100%;
-      display: block;
+      display: flex;
+      align-items: center;
     `};
 
   :disabled {

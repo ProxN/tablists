@@ -6,7 +6,7 @@ import checkAuth from '@utils/checkAuth';
 import AccountTabs from '@components/Elements/AccountTabs';
 import Container from '@components/Elements/Container';
 import Input from '@components/Elements/Input';
-import ProfileCard from '@components/Elements/ProfileCard';
+import ProfileCard from '@components/Elements/Card';
 import Button from '@components/Elements/Button';
 import Text from '@components/Elements/Text';
 import { NewPasswordInputs } from '../../types/inputs';

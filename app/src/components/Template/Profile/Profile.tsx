@@ -7,7 +7,7 @@ import { useToast } from '@context/toast.context';
 import Avatar from '@components/Elements/Avatar';
 import Button from '@components/Elements/Button';
 import Input from '@components/Elements/Input';
-import ProfileCard from '@components/Elements/ProfileCard';
+import ProfileCard from '@components/Elements/Card';
 import Text from '@components/Elements/Text';
 import { IUser } from 'types/entities';
 import { UpdateProfileInputs } from 'types/inputs';

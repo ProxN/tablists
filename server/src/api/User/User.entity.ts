@@ -1,4 +1,4 @@
-import { Field, ObjectType } from 'type-graphql';
+import { Field, ID, ObjectType } from 'type-graphql';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import {
@@ -8,14 +8,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import List from '../List/List.entity';
 
 @ObjectType()
 @Entity()
 class User extends BaseEntity {
-  @Field()
+  @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -41,6 +43,9 @@ class User extends BaseEntity {
   @Field()
   @Column({ default: false })
   isDeleted?: boolean;
+
+  @OneToMany(() => List, (list) => list.user)
+  lists!: List[];
 
   @Field(() => String)
   @CreateDateColumn()

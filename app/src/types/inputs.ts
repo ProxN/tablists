@@ -22,3 +22,10 @@ export interface NewPasswordInputs {
 export interface IError {
   error?: Error;
 }
+
+export interface CreateListInputs {
+  name?: string;
+  image?: File | string;
+  description?: string;
+  type?: string;
+}

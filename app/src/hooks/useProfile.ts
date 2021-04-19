@@ -1,15 +1,9 @@
 import { useState } from 'react';
 import { gql, graphql } from '@utils/graphqlCall';
+import Upload from '@utils/upload';
 import { useAuth } from '@context/auth.context';
 import { IError, Error, UpdateProfileInputs, NewPasswordInputs } from '../types/inputs';
 import { IUser } from '../types/entities';
-
-interface UploadResponse extends IError {
-  image?: {
-    url: string;
-    id: string;
-  };
-}
 
 interface ChangePassState {
   error?: Error | null;
@@ -24,21 +18,6 @@ interface UpdateProfileResponse extends IError {
 interface ChangePasswordResponse extends IError {
   changed?: boolean;
 }
-
-const UploadMutation = gql`
-  mutation UploadAvatar($file: Upload!) {
-    upload(file: $file, folder: "profile") {
-      error {
-        field
-        message
-      }
-      image {
-        url
-        id
-      }
-    }
-  }
-`;
 
 const UpdateProfileMutation = gql`
   mutation UpdateProfile($avatar: String, $username: String) {
@@ -89,10 +68,7 @@ export const useProfile = () => {
     const { file, ...rest } = data;
     try {
       if (file) {
-        const { upload } = await graphql.request<{ upload: UploadResponse }>(
-          UploadMutation,
-          { file }
-        );
+        const upload = await Upload(file);
         if (upload.image) {
           const { updateProfile } = await graphql.request<{
             updateProfile: UpdateProfileResponse;

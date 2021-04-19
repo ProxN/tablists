@@ -7,8 +7,8 @@ interface ContainerProps {
 const ContainerBox = styled.div<ContainerProps>`
   max-width: ${({ width }) => width || '110rem'};
   margin: 0 auto;
-  padding: 0 1.5rem;
-  margin-top: 5rem;
+  padding: 5rem 1.5rem;
+
   display: flex;
 `;
 

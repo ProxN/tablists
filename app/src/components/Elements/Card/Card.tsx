@@ -16,11 +16,11 @@ const Heading = styled.h1`
   margin-bottom: 3rem;
 `;
 
-interface ProfileCardProps {
+interface CardProps {
   title?: string;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ title, children }) => {
+const Card: React.FC<CardProps> = ({ title, children }) => {
   return (
     <CardContainer>
       <Heading>{title}</Heading>
@@ -29,4 +29,4 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ title, children }) => {
   );
 };
 
-export default ProfileCard;
+export default Card;

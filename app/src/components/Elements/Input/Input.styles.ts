@@ -4,7 +4,7 @@ export interface InputStyleProps {
   right?: boolean;
 }
 
-export const InputBase = styled.input<InputStyleProps>`
+const BaseCss = css`
   ${({ theme }) => css`
     color: ${theme.colors.text};
     border-radius: ${theme.borderRadius / 3}px;
@@ -25,7 +25,10 @@ export const InputBase = styled.input<InputStyleProps>`
   ::placeholder {
     color: rgba(0, 0, 0, 0.45);
   }
+`;
 
+export const InputBase = styled.input<InputStyleProps>`
+  ${BaseCss}
   ${({ right }) =>
     right &&
     css`
@@ -61,4 +64,9 @@ export const Label = styled.label`
   font-weight: 500;
   margin-bottom: 0.4rem;
   display: block;
+`;
+
+export const TextAreaBase = styled.textarea`
+  ${BaseCss}
+  resize:none;
 `;

@@ -29,6 +29,7 @@
         "@hooks/*":["hooks/*"],
         "@context/*":["context/*"],
         "@utils/*":["utils/*"],
+        "$types/*":["types/*"]
         // "@pages/*":["pages/*"]
       }
     },
