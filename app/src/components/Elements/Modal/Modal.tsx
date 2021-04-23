@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Button from '../Button';
 import Icon from '../Icon';
 import {
@@ -13,10 +14,16 @@ interface ModalProps {
   body: React.ReactNode | string;
   title: string;
   closeModal?: () => void;
-  handler?: () => void;
+  handler: () => Promise<void>;
 }
 
 const Modal: React.FC<ModalProps> = ({ body, title, closeModal, handler }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const handleClick = async () => {
+    setIsLoading(true);
+    await handler();
+    setIsLoading(false);
+  };
   return (
     <ModalContainer>
       <ModalContent>
@@ -31,7 +38,7 @@ const Modal: React.FC<ModalProps> = ({ body, title, closeModal, handler }) => {
           <Button onClick={closeModal} status='default' outline>
             Cancal
           </Button>
-          <Button onClick={handler} status='danger'>
+          <Button loading={isLoading} onClick={handleClick} status='danger'>
             Delete
           </Button>
         </ModalFooter>

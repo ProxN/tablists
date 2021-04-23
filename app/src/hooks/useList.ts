@@ -1,7 +1,7 @@
+import { useQuery } from 'react-query';
 import { useState } from 'react';
 import { gql, graphql } from '@utils/graphqlCall';
-import Upload from '@utils/upload';
-import { IError, Error, CreateListInputs } from '$types/inputs';
+import { Error, CreateListInputs, IError } from '$types/inputs';
 import { IList } from '$types/entities';
 
 interface IListState {
@@ -15,26 +15,29 @@ interface ListResponse {
   error?: Error;
 }
 
+interface DeleteListResponse extends IError {
+  deleted?: boolean;
+}
 interface Response {
   createList?: ListResponse;
 }
 
-const ResponseData = `
-    error{
-        field
-        message
-    }
-    list{
-        id
-        name
-        type
-        description
-        image
-        createdAt
-        updatedAt
-        published
-    }
-`;
+// const ResponseData = `
+//     error{
+//         field
+//         message
+//     }
+//     list{
+//         id
+//         name
+//         type
+//         description
+//         image
+//         createdAt
+//         updatedAt
+//         published
+//     }
+// `;
 
 const createListMutation = gql`
   mutation CreateList(
@@ -54,6 +57,28 @@ const createListMutation = gql`
         id
         name
       }
+    }
+  }
+`;
+
+const deleteListMutation = gql`
+  mutation DeleteList($listId: String!) {
+    deleteList(listId: $listId) {
+      error {
+        field
+        message
+      }
+      deleted
+    }
+  }
+`;
+
+const getUserListsQuery = gql`
+  query GetUserLists($published: Boolean!) {
+    getUserLists(published: $published) {
+      id
+      name
+      type
     }
   }
 `;
@@ -89,3 +114,56 @@ export const useCreateList = () =>
   useListState<CreateListInputs>(createListMutation, 'createList');
 
 export const useEditList = () => {};
+
+export const useDeleteList = () => {
+  const [error, setError] = useState<Error>();
+  const [deleted, setDeleted] = useState(false);
+
+  const mutate = async (listId: string) => {
+    setDeleted(false);
+    try {
+      const { deleteList } = await graphql.request<{ deleteList: DeleteListResponse }>(
+        deleteListMutation,
+        {
+          listId,
+        }
+      );
+
+      if (deleteList.error) {
+        setError(deleteList.error);
+      } else if (deleteList.deleted) {
+        setDeleted(true);
+      }
+    } catch (err) {
+      setError({
+        field: 'network',
+        message: 'Something went worng! Please try again.',
+      });
+    }
+  };
+  return [mutate, { deleted, error }] as [
+    typeof mutate,
+    {
+      deleted: typeof deleted;
+      error: typeof error;
+    }
+  ];
+};
+
+export const useUserLists = ({ published, key }: { published: boolean; key: string }) => {
+  return useQuery(
+    key,
+    async () => {
+      const { getUserLists } = await graphql.request<{ getUserLists: IList[] }>(
+        getUserListsQuery,
+        {
+          published,
+        }
+      );
+      return getUserLists;
+    },
+    {
+      staleTime: 60 * 60 * 1000, // 1hour,
+    }
+  );
+};

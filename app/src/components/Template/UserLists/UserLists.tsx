@@ -1,6 +1,8 @@
+import { useState } from 'react';
+import { useUserLists } from '@hooks/useList';
 import Button from '@components/Elements/Button';
 import Icon from '@components/Elements/Icon';
-import { useState } from 'react';
+import Loader from '@components/Elements/Loader';
 import Published from './Published';
 import Unpublished from './Unpublished';
 import {
@@ -13,6 +15,10 @@ import {
 
 const UserLists = () => {
   const [publishedList, setPublishList] = useState(false);
+  const { data, isLoading } = useUserLists({
+    published: publishedList,
+    key: publishedList ? 'published_lists' : 'unpublished_lists',
+  });
 
   return (
     <UserListsContainer>
@@ -44,7 +50,13 @@ const UserLists = () => {
             New list
           </Button>
         </BoxHeader>
-        {publishedList ? <Published /> : <Unpublished />}
+        {isLoading ? (
+          <Loader size='small' />
+        ) : publishedList ? (
+          <Published lists={data} />
+        ) : (
+          <Unpublished lists={data} />
+        )}
       </Box>
     </UserListsContainer>
   );

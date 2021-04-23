@@ -48,6 +48,7 @@
         "@typescript-eslint/no-unsafe-assignment":"off",
         "@typescript-eslint/no-unsafe-call":"off",
         "@typescript-eslint/no-floating-promises":"off",
-        "@typescript-eslint/unbound-method":"off"
+        "@typescript-eslint/unbound-method":"off",
+        "no-nested-ternary":"off"
     }
   }

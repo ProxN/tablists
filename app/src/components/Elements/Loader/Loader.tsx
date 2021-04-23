@@ -27,13 +27,13 @@ const Container = css`
   right: 0;
   bottom: 0;
   background: #fff;
+  height: 100%;
 `;
 
 const LoaderContainer = styled.div<LoaderProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
   color: ${({ color, theme }) =>
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     color === 'default' ? 'white' : theme.colors.primary.main};

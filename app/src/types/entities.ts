@@ -12,6 +12,8 @@ export interface IList {
   id: string;
   name: string;
   image: string;
+  type: string;
+  itemsCount?: number;
   published: boolean;
   views: string;
   description: string;

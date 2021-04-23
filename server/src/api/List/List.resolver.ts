@@ -157,6 +157,16 @@ class ListResolver {
 
     return { list };
   }
+
+  @Authorized()
+  @Query(() => [List])
+  async getUserLists(
+    @Arg('published') published: boolean,
+    @Ctx() { req }: Context
+  ): Promise<List[]> {
+    const lists = await List.find({ where: { userId: req.session.userId, published } });
+    return lists;
+  }
 }
 
 export default ListResolver;
