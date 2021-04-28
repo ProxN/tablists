@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import NextLink from 'next/link';
 import { useUserLists } from '@hooks/useList';
 import Button from '@components/Elements/Button';
 import Icon from '@components/Elements/Icon';
@@ -45,10 +46,12 @@ const UserLists = () => {
           <BoxHeading>
             {publishedList ? 'Published Lists' : 'My unpublished lists'}
           </BoxHeading>
-          <Button>
-            <Icon name='plus' />
-            New list
-          </Button>
+          <NextLink href='/create_list'>
+            <Button>
+              <Icon name='plus' />
+              New list
+            </Button>
+          </NextLink>
         </BoxHeader>
         {isLoading ? (
           <Loader size='small' />

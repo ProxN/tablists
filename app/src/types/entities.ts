@@ -15,6 +15,7 @@ export interface IList {
   type: string;
   itemsCount?: number;
   published: boolean;
+  userId: string;
   views: string;
   description: string;
   updatedAt: string;

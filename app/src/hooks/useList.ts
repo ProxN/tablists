@@ -20,24 +20,26 @@ interface DeleteListResponse extends IError {
 }
 interface Response {
   createList?: ListResponse;
+  editList?: ListResponse;
 }
 
-// const ResponseData = `
-//     error{
-//         field
-//         message
-//     }
-//     list{
-//         id
-//         name
-//         type
-//         description
-//         image
-//         createdAt
-//         updatedAt
-//         published
-//     }
-// `;
+const ResponseData = `
+    error{
+        field
+        message
+    }
+    list{
+        id
+        name
+        type
+        userId
+        description
+        image
+        createdAt
+        updatedAt
+        published
+    }
+`;
 
 const createListMutation = gql`
   mutation CreateList(
@@ -73,12 +75,28 @@ const deleteListMutation = gql`
   }
 `;
 
+const editListMutation = gql`
+  mutation EditList($listId:String!,$name:String,$description:String,$image:String,$type:String){
+      editList(listId:$listId,data:{name:$name,description:$description,image:$image,type:$type}){
+        ${ResponseData}
+      }
+  }
+`;
+
 const getUserListsQuery = gql`
   query GetUserLists($published: Boolean!) {
     getUserLists(published: $published) {
       id
       name
       type
+    }
+  }
+`;
+
+const getListQuery = gql`
+  query GetList($listId:String!){
+    getList(listId:$listId){
+      ${ResponseData}
     }
   }
 `;
@@ -113,7 +131,12 @@ const useListState = <I>(query: string, type: keyof Response) => {
 export const useCreateList = () =>
   useListState<CreateListInputs>(createListMutation, 'createList');
 
-export const useEditList = () => {};
+export const useEditList = () =>
+  useListState<
+    {
+      listId: string;
+    } & CreateListInputs
+  >(editListMutation, 'editList');
 
 export const useDeleteList = () => {
   const [error, setError] = useState<Error>();
@@ -166,4 +189,14 @@ export const useUserLists = ({ published, key }: { published: boolean; key: stri
       staleTime: 60 * 60 * 1000, // 1hour,
     }
   );
+};
+
+export const useGetList = ({ listId }: { listId: string }) => {
+  return useQuery(['list', listId], async () => {
+    const { getList } = await graphql.request<{ getList: ListResponse }>(getListQuery, {
+      listId,
+    });
+
+    return getList.list;
+  });
 };

@@ -1,64 +1,92 @@
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { useCreateList } from '@hooks/useList';
+import { useCreateList, useEditList } from '@hooks/useList';
 import uploadImage from '@utils/upload';
 import Button from '@components/Elements/Button';
 import Input, { TextArea } from '@components/Elements/Input';
 import Text from '@components/Elements/Text';
 import { CreateListInputs } from '$types/inputs';
 import { Form, Row, FileInput, ImageBox, Label, Types } from './CreateListForm.styles';
+import { IList } from '$types/entities';
+
+interface CreateListProps {
+  list?: IList;
+}
 
 const types = ['movies', 'animes', 'travel', 'books', 'others'];
 
-const CreateListForm = () => {
-  const [type, setType] = useState('movies');
+const CreateListForm: React.FC<CreateListProps> = ({ list }) => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [type, setType] = useState(list?.type || 'movies');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [file, setFile] = useState<File>();
   const [imageUrl, setImageUrl] = useState('');
-  const router = useRouter();
-  const {
-    control,
-    handleSubmit,
-    formState,
-    setValue,
-    register,
-  } = useForm<CreateListInputs>({
+  const { control, handleSubmit, formState } = useForm<CreateListInputs>({
     mode: 'onChange',
+    defaultValues: {
+      name: list?.name || '',
+      description: list?.description || '',
+    },
   });
-  const [createList, { list }] = useCreateList();
+  const [createList, { list: resData }] = useCreateList();
+  const [editList, { list: updatedList }] = useEditList();
 
   useEffect(() => {
-    if (list) {
-      router.push(`/create_list/items/${list.id}`);
+    if (resData) {
+      router.push(`/create_list/items/${resData.id}`);
     }
-  }, [list]);
+  }, [resData]);
+
+  useEffect(() => {
+    if (updatedList) {
+      queryClient.setQueryData(['list', updatedList.id], updatedList);
+    }
+  }, [updatedList]);
+
   const handleTypeClick = (value: string) => {
     setType(value);
   };
 
   const onSubmit = async (values: CreateListInputs) => {
-    const { image, ...rest } = values;
-    if (image) {
-      setIsLoading(true);
-      const upload = await uploadImage(image as File);
+    setIsLoading(true);
+    if (file) {
+      const upload = await uploadImage(file);
       if (upload.error) {
         setError(upload.error.message);
       }
       if (upload.image) {
-        await createList({
-          ...rest,
-          type,
-          image: upload.image?.url,
-        });
+        if (list) {
+          await editList({
+            listId: list.id,
+            ...values,
+            type,
+            image: upload.image?.url,
+          });
+        } else {
+          await createList({
+            ...values,
+            type,
+            image: upload.image?.url,
+          });
+        }
       }
-      setIsLoading(false);
+    } else if (list) {
+      await editList({
+        listId: list.id,
+        ...values,
+        type,
+      });
     }
+    setIsLoading(false);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setValue('image', e.target.files[0]);
+      setFile(e.target.files[0]);
       const reader = new FileReader();
       reader.readAsDataURL(e.target.files[0]);
       reader.onloadend = () => {
@@ -86,7 +114,9 @@ const CreateListForm = () => {
       </Row>
       <Row>
         <Controller
-          render={(props) => <Input label='Name' placeholder='List name' {...props} />}
+          render={(props) => (
+            <Input label='Name' placeholder='List name' {...props.field} />
+          )}
           control={control}
           name='name'
           defaultValue=''
@@ -97,10 +127,10 @@ const CreateListForm = () => {
         <Controller
           render={(props) => (
             <TextArea
+              {...props.field}
               rows={5}
               label='Description'
               placeholder='List Description'
-              {...props}
             />
           )}
           control={control}
@@ -112,22 +142,13 @@ const CreateListForm = () => {
       <Row>
         <Label htmlFor='image'>
           Image
-          <Controller
-            render={() => (
-              <FileInput
-                {...register('image')}
-                onChange={handleFileChange}
-                id='image'
-                type='file'
-              />
-            )}
-            name='image'
-            rules={{ required: true }}
-            control={control}
-            defaultValue=''
-          />
+          <FileInput onChange={handleFileChange} id='image' type='file' name='image' />
           <ImageBox>
-            {imageUrl ? <img alt='List' src={imageUrl} /> : 'Choses list image'}
+            {list || imageUrl ? (
+              <img alt='List' src={list?.image || imageUrl} />
+            ) : (
+              'Choses list image'
+            )}
           </ImageBox>
         </Label>
       </Row>
@@ -135,10 +156,10 @@ const CreateListForm = () => {
       <Row flex>
         <Button
           loading={isLoading}
-          disabled={!formState.isValid || isLoading}
+          disabled={!formState.isValid || (!list && !file) || isLoading}
           type='submit'
         >
-          create new list
+          {list ? 'Save' : 'create new list'}
         </Button>
       </Row>
     </Form>

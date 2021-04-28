@@ -25,7 +25,7 @@ export interface IError {
 
 export interface CreateListInputs {
   name?: string;
-  image?: File | string;
+  image?: string;
   description?: string;
   type?: string;
 }
